@@ -7,7 +7,7 @@ apiRouter.get('/',(req,res) => {
 });
 
 // Get workouts in range
-apiRouter.get('/',(req,res) => {
+apiRouter.get('/range',(req,res) => {
     res.send('Hello from your server!');
 });
 
