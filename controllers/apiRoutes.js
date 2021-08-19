@@ -9,27 +9,24 @@ apiRouter.get("/", async (req, res) => {
         totalDuration: { $sum: "$exercises.duration" },
       },
     },
-    { $sort: { day: -1 } },
+    { $sort: { day: 1 } },
   ]);
 
   res.json(agg);
 });
 
 // Get workouts in range
-apiRouter.get("/range", (req, res) => {
-  res.send("Hello from your server!");
-});
+apiRouter.get("/range", async (req, res) => {
+    const agg = await db.Workout.aggregate([
+        {
+          $addFields: {
+            totalDuration: { $sum: "$exercises.duration" },
+          },
+        },
+        { $sort: { day: 1 } },
+      ]);
 
-// Add exercise to current workout
-apiRouter.put("/", (req, res) => {
-  db.Workout.find({})
-    // .sort({ date: -1 })
-    .then((dbTransaction) => {
-      res.json(dbTransaction);
-    })
-    .catch((err) => {
-      res.status(400).json(err);
-    });
+      res.json(agg);
 });
 
 // Add exercise to current workout
@@ -44,7 +41,20 @@ apiRouter.put("/:id", async (req, res) => {
 
 // Create new workout
 apiRouter.post("/", async (req, res) => {
-  const newWorkout = db.Workout.create(req.body);
+    let workout;
+    if(Object.entries(req.body).length > 0){
+        console.log("This is not the way");
+        workout = new db.Workout({
+            day: Date.now(),
+            exercises: [],
+        });
+    } else {
+        console.log("This is the way");
+        workout = new db.Workout({day:Date.now(),...req.body});
+    }
+    console.log(workout);
+  const newWorkout = await db.Workout.create(workout);
+  console.log(newWorkout);
   res.json(newWorkout);
 });
 
