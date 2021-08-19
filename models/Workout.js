@@ -7,7 +7,10 @@ const workoutSchema = new Schema({
         type: Date,
         required: true,
     },
-
+    totalDuration: {
+        type: Number,
+        default: 0,
+    },
     exercises: Array,
 });
 
